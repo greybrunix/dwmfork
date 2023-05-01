@@ -1647,7 +1647,15 @@ showhide(Client *c)
 void
 spawn(const Arg *arg)
 {
-	struct sigaction sa;
+	if (fork() == 0) {
+		if (dpy)
+			close(ConnectionNumber(dpy));
+		setsid();
+		execvp(((char **)arg->v)[0], (char **)arg->v);
+		die("dwm: execvp '%s' failed:", ((char **)arg->v)[0]);
+	}
+    return;
+	/*struct sigaction sa;
 
 	if (arg->v == dmenucmd)
 		dmenumon[0] = '0' + selmon->num;
@@ -1663,7 +1671,7 @@ spawn(const Arg *arg)
 
 		execvp(((char **)arg->v)[0], (char **)arg->v);
 		die("dwm: execvp '%s' failed:", ((char **)arg->v)[0]);
-	}
+	}*/
 }
 
 void
